@@ -43,6 +43,12 @@ actor "IBM\nWeather\nCompany" as WeatherApi
 component "Weather\nProducer" as WeatherProducer
 queue "weather_topic" as WeatherTopic
 component "Weather\nConsumer" as WeatherConsumer
+
+actor "Twitter" as TwitterApi
+component "Twitter\nProducer" as TwitterProducer
+queue "twitter_topic" as TwitterTopic
+component "Twitter\nConsumer" as TwitterConsumer
+
 component "DB\nWriter" as DbWriter
 database "RDBMS" as Rdbms
 boundary "Weather\nDashboard" as WeatherDashboard
@@ -51,8 +57,16 @@ WeatherApi --> WeatherProducer : Weather\n events in\nJSON
 WeatherProducer --> WeatherTopic : bytes
 WeatherTopic --> WeatherConsumer : bytes
 WeatherConsumer -->DbWriter
+
+TwitterApi --> TwitterProducer : Tweets\nin\nJSON
+TwitterProducer --> TwitterTopic : bytes
+TwitterTopic --> TwitterConsumer : bytes
+TwitterConsumer -->DbWriter
+
 DbWriter --> Rdbms : records
 Rdbms --> WeatherDashboard
+
+
 
 
 @enduml
