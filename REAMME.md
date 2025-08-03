@@ -125,7 +125,8 @@ WeatherConsumer2-> WeatherDashboard
 ## Kafka Streams API
 
 - A simple client library to facilitate data processing in event streaming pipelines.
-- Processes and analyzes data stored in Kafka topics
+- Processes and analyzes data stored in Kafka topics: 
+    It receives, transforms, and forwards the processed stream
 - Each record only processed once
 - Processing one record at a time
 
@@ -219,9 +220,6 @@ strProc1_2 --> strProc2_2 : Stream
 strProc2_1 --> strProc3_1 : Stream
 strProc2_2 --> strProc3_2 : Stream
 
-
-
-
 strProc3_1 --> strProc4_1 : Stream
 strProc3_2 --> strProc4_2 : Stream
 
@@ -229,6 +227,58 @@ strProc4_1 --> topic2
 strProc4_2 --> topic2
 
 strProc2_1 -down-> strProc2_2 : Stream
+
+@enduml
+```
+
+There are 2 types of special processors.
+- The sourcce processor which has no upstream processors
+It acts as a consumer which consumes streams from Kafka topics and forward the process streams to its downstreaù processors.
+- On the right the sink processor : 
+    It has no downstream processors.It acts as a producer which publishes the received stream to a Kafka topic
+
+
+```plantuml
+@startuml
+' Left-to-right direction
+left to right direction
+' Style settings for cleaner look
+skinparam shadowing true
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam defaultTextAlignment center
+skinparam wrapWidth 20
+
+skinparam ArrowColor black
+skinparam ArrowFontSize 10
+
+skinparam databaseBackgroundColor #e6f0ff
+skinparam databaseBorderColor #336699
+skinparam queueBackgroundColor #fff7e6
+skinparam queueBorderColor #ff9900
+skinparam backgroundColor #ffffff
+
+title Kafka weather stream processing (simplified with Kafka API)
+
+component "Weather\nProducer 1" as p1
+component "Weather\nConsumer 2" as c2
+
+queue "topic" as topic1
+queue "topic" as topic2
+
+frame "Kafka Streams API" {
+    component "Source processor" as k1
+    component "Stream processor" as k2
+    component "Sink processor" as k3
+}
+
+p1 --> topic1 : Publish
+topic1 --> k1 : Consume
+k1 --> k2 : Stream
+k2 --> k3 : Stream
+k3 --> topic2 : Publish
+topic2 --> c2 : Read
+
 
 @enduml
 ```
